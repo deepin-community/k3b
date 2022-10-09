@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+# lots of deprecation warnings, so disable them for now
+export DEB_CXXFLAGS_MAINT_APPEND = -Wno-deprecated -Wno-deprecated-declarations
+
+%:
+	dh $@ --with kf5
+
+override_dh_auto_configure:
+	dh_auto_configure -Skf5 -- -DK3B_ENABLE_HAL_SUPPORT=OFF
+
+execute_after_dh_install-indep:
+	# duplicated English documentation, only in k3b-data
+	rm -rfv debian/k3b-i18n/usr/share/doc/HTML/en/
+
+.PHONY: override_dh_dwz
